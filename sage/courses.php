@@ -56,8 +56,8 @@
         <div class="content">
         <div class="container">
         <?php  
-            require_once("DatabaseClass.php"); 
-	     $db_obj = new DatabaseClass();  
+            require_once("DatabaseClass.php");
+	    $db_obj = DatabaseClass::getInstance();
             $per_page_record = 5;  // Number of entries to show in a page.   
             // Look for a GET variable page if not found default is 1.        
             if (isset($_GET["page"])) {    
@@ -66,12 +66,13 @@
             else {$page=1;}     
             $start_from = ($page-1) * $per_page_record;     
             $query = "SELECT * FROM courses LIMIT $start_from, $per_page_record";     
-             $rs_result = $db_obj -> execute_query($query);  
+            $rs_result = $db_obj -> execute_query($query);
             ?>    
         <div class="container">
             <br>   
             <div>
 		<h3> Courses list</h3><br>
+		<div id="error_display_div"></div>
                 <table class="table table-striped table-condensed table-bordered">
                     <thead>
                         <tr>
@@ -82,7 +83,7 @@
                     </thead>
                     <tbody>
                         <?php     
-                             while ($row = $db_obj -> get_fetched_data($rs_result)) {      
+                             while ($row = $db_obj -> get_fetched_data($rs_result)) {     
                             // Display each field of the records.    
                             ?>     
                         <tr>
@@ -232,6 +233,8 @@ function delete_course_row(course_name, course_id) {
 
 $('document').ready(function() {
 
+// for register course module
+
     /* handle form validation */
     $("#register_form").validate({
         rules: {
@@ -277,7 +280,7 @@ $('document').ready(function() {
 
                 } else {
                     $("#register_error").fadeIn(100, function() {
-                        $("#register_error").html('<div class="alert alert-danger"> ' + data + ' !</div>');
+                        $("#error_display_div").html('<font color="red"><b>Sorry, some error occured, unable to add new course, contact support team :/</b></font>');
                         $("#registercourse").html('Add');
                     });
                 }
@@ -287,6 +290,7 @@ $('document').ready(function() {
     }
 });
 
+// for update course module
 function update_course_form() {
     var data = $("#update_course_form").serialize();
     $.ajax({
@@ -306,8 +310,8 @@ function update_course_form() {
                 }, 500);
             } else {
                 $("#update_error").fadeIn(1000, function() {
-
-                    $("#update_course").text('some error occured');
+		    $("#error_display_div").html('<font color="red"><b>Sorry, some error occured, unable to update course, contact support team :/</b></font>');
+                    $('#update_modal').modal('hide');
                 });
             }
 
@@ -316,6 +320,7 @@ function update_course_form() {
     return false;
 }
 
+//for delete course module
 function delete_course_form() {
     var data = $("#delete_course_form").serialize();
     $.ajax({
@@ -335,8 +340,8 @@ function delete_course_form() {
                 }, 500);
             } else {
                 $("#delete_error").fadeIn(1000, function() {
-
-                    $("#delete_course").text('some error occured');
+		    $("#error_display_div").html('<font color="red"><b>Sorry, some error occured, unable to delete course, contact support team :/</b></font>');
+                    $('#delete_modal').modal('hide');
                 });
             }
 
