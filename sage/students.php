@@ -57,8 +57,9 @@
         <div class="container">
         <?php  
            require_once("DatabaseClass.php");
-	    $db_obj = new DatabaseClass(); 
-            $per_page_record = 5;  // Number of entries to show in a page.   
+	   $db_obj = DatabaseClass::getInstance();
+
+           $per_page_record = 5;  // Number of entries to show in a page.   
             // Look for a GET variable page if not found default is 1.        
             if (isset($_GET["page"])) {    
                 $page  = $_GET["page"];    
@@ -66,13 +67,13 @@
             else {$page=1;}     
             $start_from = ($page-1) * $per_page_record;     
             $query = "SELECT * FROM students LIMIT $start_from, $per_page_record";  
-	    $rs_result = $db_obj -> execute_query($query);  
-        
+	    $rs_result = $db_obj -> execute_query($query);
             ?>    
         <div class="container">
             <br>   
             <div>
 		<h3> Students list</h3><br>
+		<div id="error_display_div"></div>
                 <table class="table table-striped table-condensed table-bordered">
                     <thead>
                         <tr>
@@ -84,7 +85,7 @@
                     <tbody>
                         <?php     
 			     while ($row = $db_obj -> get_fetched_data($rs_result)) {    
-                            // Display each field of the records.    
+                            // Display each field of the records.   
                             ?>     
                         <tr>
                             <?php
@@ -109,7 +110,7 @@
                 <div class="pagination">    
                     <?php  
                         $query = "SELECT COUNT(*) FROM students";  
-			$rs_result = $db_obj -> execute_query($query);  
+			$rs_result = $db_obj -> execute_query($query);
 			$row = $db_obj -> get_row($rs_result);  
                         $total_records = $row[0];     
                         if($total_records==0)
@@ -242,6 +243,7 @@ function delete_student_row(first_name, student_id) {
 
 $('document').ready(function() {
 
+// for register student module
     $.validator.addMethod(
         "australianDate",
         function(value, element) {
@@ -249,7 +251,6 @@ $('document').ready(function() {
         },
         "Please enter a date in the format dd/mm/yyyy."
     );
-
     /* handle form validation */
     $("#register_form").validate({
         rules: {
@@ -303,7 +304,7 @@ $('document').ready(function() {
 
                 } else {
                     $("#register_error").fadeIn(100, function() {
-                        $("#register_error").html('<div class="alert alert-danger"> ' + data + ' !</div>');
+                        $("#error_display_div").html('<font color="red"><b>Sorry, some error occured, unable to register student, contact support team :/</b></font>');
                         $("#registerstudent").html('Register');
                     });
                 }
@@ -313,6 +314,7 @@ $('document').ready(function() {
     }
 });
 
+// for update student module
 function update_student_form() {
     var data = $("#update_student_form").serialize();
     $.ajax({
@@ -332,8 +334,8 @@ function update_student_form() {
                 }, 500);
             } else {
                 $("#update_error").fadeIn(1000, function() {
-
-                    $("#update_student").text('some error occured');
+                    $("#error_display_div").html('<font color="red"><b>Sorry, some error occured, unable to update student, contact support team :/</b></font>');
+		    $('#update_modal').modal('hide');
                 });
             }
 
@@ -342,6 +344,7 @@ function update_student_form() {
     return false;
 }
 
+//for delete student module
 function delete_student_form() {
     var data = $("#delete_student_form").serialize();
     $.ajax({
@@ -361,8 +364,8 @@ function delete_student_form() {
                 }, 500);
             } else {
                 $("#delete_error").fadeIn(1000, function() {
-
-                    $("#delete_student").text('some error occured');
+		    $("#error_display_div").html('<font color="red"><b>Sorry, some error occured, unable to delete student, contact support team :/</b></font>');
+                    $('#delete_modal').modal('hide');
                 });
             }
 

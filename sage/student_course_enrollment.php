@@ -57,7 +57,7 @@
         <div class="container">
         <?php  
            require_once("DatabaseClass.php");
-	    $db_obj = new DatabaseClass(); 
+	    $db_obj = DatabaseClass::getInstance();
             $per_page_record = 5;  // Number of entries to show in a page.   
             // Look for a GET variable page if not found default is 1.        
             if (isset($_GET["page"])) {    
@@ -73,6 +73,7 @@
             <br>   
             <div>
 		<h3> Enrollment list</h3><br>
+		<div id="error_display_div"></div>
                 <table class="table table-striped table-condensed table-bordered">
                     <thead>
                         <tr>
@@ -235,7 +236,7 @@ function delete_student_enrollment_row(student_name, course_name,student_enrollm
 
 $('document').ready(function() {
 
-   
+// enrollment addition  
     /* handle form validation */
     $("#register_form").validate({
         rules: {
@@ -280,7 +281,7 @@ $('document').ready(function() {
 
                 } else {
                     $("#register_error").fadeIn(100, function() {
-                        $("#register_error").html('<div class="alert alert-danger"> ' + data + ' !</div>');
+                        $("#error_display_div").html('<font color="red"><b>Sorry, some error occured, unable to add new enrollment, contact support team :/</b></font>');
                         $("#enrollstudent").html('Enroll');
                     });
                 }
@@ -290,6 +291,7 @@ $('document').ready(function() {
     }
 });
 
+//enrollment deletion
 function delete_student_emrollment_form() {
     var data = $("#delete_student_emrollment_form").serialize();
     $.ajax({
@@ -309,8 +311,8 @@ function delete_student_emrollment_form() {
                 }, 500);
             } else {
                 $("#delete_error").fadeIn(1000, function() {
-
-                    $("#delete_student_enrollment").text('some error occured');
+			$("#error_display_div").html('<font color="red"><b>Sorry, some error occured, unable to delete enrollment, contact support team :/</b></font>');
+                    	 $('#delete_modal').modal('hide');
                 });
             }
 
