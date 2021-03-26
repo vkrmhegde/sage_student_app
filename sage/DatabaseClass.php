@@ -1,12 +1,13 @@
 <?php
+require_once('config.php');
 //database connection and queries in singleton pattern
 class DatabaseClass {
 	private $_connection;
 	private static $_instance; //singleton
-	private $_host = "localhost";
-	private $_username = "root";
-	private $_password = "root";
-	private $_database = "sage_student_project";
+	private $_host = DB_HOST;
+	private $_username = DB_UER;
+	private $_password = DB_PASS;
+	private $_database = DB_NAME;
 
 	// get instance of db
 	public static function getInstance() {
